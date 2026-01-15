@@ -1,0 +1,4 @@
+# ZAP Scanning Rules Configuration
+# Format: rule_id	action	rationale
+10021	IGNORE	X-Content-Type-Options Header Missing - Not critical for API
+10038	IGNORE	Content Security Policy Header Missing - API doesn't serve HTML
