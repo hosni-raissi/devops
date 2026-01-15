@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 env:
-  DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/task-api
+  DOCKER_IMAGE: hosniraissi7/task-api
   DOCKER_TAG: ${{ github.sha }}
 
 jobs:
