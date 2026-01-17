@@ -1,3 +1,23 @@
+# =============================================================================
+# DEPLOYMENT.YAML - Application Deployment Configuration
+# =============================================================================
+# Purpose: Defines how to deploy and manage the Task API pods
+#
+# Key Features:
+#   - Replicas: 2 pods for high availability
+#   - Resources: CPU/memory requests and limits
+#   - Probes: Liveness (restart if unhealthy) & Readiness (traffic routing)
+#   - Prometheus annotations: Auto-discovery for metrics scraping
+#
+# Pod Lifecycle:
+#   1. Pod starts → waits initialDelaySeconds
+#   2. Readiness probe passes → receives traffic
+#   3. Liveness probe fails 3x → pod restarted
+#
+# Apply: kubectl apply -f deployment.yaml
+# Scale: kubectl scale deployment task-api --replicas=3
+# =============================================================================
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -57,4 +77,10 @@ spec:
             runAsUser: 1000
             readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false
+          volumeMounts:
+            - name: tmp-volume
+              mountPath: /tmp
+      volumes:
+        - name: tmp-volume
+          emptyDir: {}
       restartPolicy: Always

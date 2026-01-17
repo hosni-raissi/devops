@@ -1,3 +1,17 @@
+# =============================================================================
+# NAMESPACE.YAML - Kubernetes Namespace Definition
+# =============================================================================
+# Purpose: Creates an isolated namespace 'task-api' for all application resources
+#
+# Why Namespaces?
+#   - Isolation: Separates resources from other apps in the cluster
+#   - Organization: Groups related resources together
+#   - Access Control: Enables RBAC policies per namespace
+#   - Resource Quotas: Can limit CPU/memory per namespace
+#
+# Apply: kubectl apply -f namespace.yaml
+# =============================================================================
+
 apiVersion: v1
 kind: Namespace
 metadata:

@@ -1,4 +1,19 @@
-# Multi-stage build for smaller image
+# =============================================================================
+# DOCKERFILE - Multi-stage Build for Task API
+# =============================================================================
+# Purpose: Creates a secure, optimized Docker image for the Flask application
+# 
+# Features:
+#   - Multi-stage build: Reduces final image size by separating build/runtime
+#   - Non-root user: Runs as 'appuser' for security (prevents container escape)
+#   - Health check: Docker monitors container health via /health endpoint
+#   - Gunicorn: Production-grade WSGI server (not Flask's dev server)
+#
+# Build: docker build -t task-api .
+# Run:   docker run -p 5000:5000 task-api
+# =============================================================================
+
+# Stage 1: Builder - Install dependencies
 FROM python:3.11-slim AS builder
 
 WORKDIR /app
@@ -13,13 +28,17 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # Create non-root user for security
-RUN useradd --create-home --shell /bin/bash appuser
+RUN useradd --create-home --shell /bin/bash appuser && \
+    mkdir -p /tmp && chmod 1777 /tmp
 
 # Copy dependencies from builder
 COPY --from=builder /root/.local /home/appuser/.local
 
 # Copy application code
 COPY app/main.py .
+
+# Ensure proper ownership
+RUN chown -R appuser:appuser /app
 
 # Set environment variables
 ENV PATH=/home/appuser/.local/bin:$PATH

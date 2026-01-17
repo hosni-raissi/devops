@@ -1,3 +1,24 @@
+# =============================================================================
+# HPA.YAML - Horizontal Pod Autoscaler
+# =============================================================================
+# Purpose: Automatically scales pods based on CPU/memory utilization
+#
+# Scaling Rules:
+#   - Min Replicas: 2 (always have at least 2 pods)
+#   - Max Replicas: 5 (never exceed 5 pods)
+#   - Scale Up: When CPU > 70% or Memory > 80%
+#   - Scale Down: When metrics drop below thresholds
+#
+# How It Works:
+#   1. HPA checks metrics every 15 seconds
+#   2. Calculates desired replicas: ceil(current * (currentMetric / targetMetric))
+#   3. Scales deployment up or down gradually
+#
+# Prerequisites: Metrics Server must be installed in cluster
+# Apply: kubectl apply -f hpa.yaml
+# Check: kubectl get hpa
+# =============================================================================
+
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:

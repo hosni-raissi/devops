@@ -1,3 +1,25 @@
+# =============================================================================
+# DOCKER-COMPOSE.YML - Local Development Stack
+# =============================================================================
+# Purpose: Orchestrates the complete application stack for local development
+#
+# Services:
+#   - task-api (port 5000):   Flask REST API application
+#   - prometheus (port 9090): Metrics collection and storage
+#   - grafana (port 3000):    Metrics visualization dashboards
+#
+# Usage:
+#   Start:   docker compose up -d
+#   Build:   docker compose up --build -d
+#   Logs:    docker compose logs -f
+#   Stop:    docker compose down
+#
+# Access:
+#   API:        http://localhost:5000
+#   Prometheus: http://localhost:9090
+#   Grafana:    http://localhost:3000 (admin/admin123)
+# =============================================================================
+
 services:
   # Main Application
   task-api:

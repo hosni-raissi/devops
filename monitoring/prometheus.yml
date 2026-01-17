@@ -1,3 +1,24 @@
+# =============================================================================
+# PROMETHEUS.YML - Metrics Collection Configuration
+# =============================================================================
+# Purpose: Configures Prometheus to scrape metrics from targets
+#
+# How Prometheus Works:
+#   1. Scrapes /metrics endpoint from configured targets every 15s
+#   2. Stores time-series data in local TSDB
+#   3. Provides PromQL for querying metrics
+#   4. Grafana visualizes the data
+#
+# Configured Targets:
+#   - prometheus:9090 - Prometheus self-monitoring
+#   - task-api:5000   - Flask application metrics
+#
+# Key Metrics from Task API:
+#   - http_requests_total: Request count by method/endpoint/status
+#   - http_request_duration_seconds: Request latency histogram
+#   - process_resident_memory_bytes: Memory usage
+# =============================================================================
+
 global:
   scrape_interval: 15s
   evaluation_interval: 15s

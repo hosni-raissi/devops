@@ -1,3 +1,25 @@
+# =============================================================================
+# INGRESS.YAML - HTTP Routing & Load Balancing
+# =============================================================================
+# Purpose: Routes external HTTP traffic to internal services
+#
+# Why Ingress?
+#   - Single entry point for multiple services
+#   - Host-based routing (api.example.com → service-a)
+#   - Path-based routing (/api → service-a, /web → service-b)
+#   - TLS termination (HTTPS)
+#   - Load balancing across pods
+#
+# This Ingress:
+#   - Host: task-api.local
+#   - Path: / → task-api-service:80
+#   - Controller: NGINX (annotation-based config)
+#
+# Prerequisites: Ingress Controller (nginx, traefik, etc.)
+# Local Testing: Add '127.0.0.1 task-api.local' to /etc/hosts
+# Apply: kubectl apply -f ingress.yaml
+# =============================================================================
+
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:

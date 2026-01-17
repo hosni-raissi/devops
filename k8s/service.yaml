@@ -1,3 +1,23 @@
+# =============================================================================
+# SERVICE.YAML - Network Service Definition
+# =============================================================================
+# Purpose: Exposes the Task API pods to network traffic
+#
+# Service Types:
+#   - ClusterIP: Internal only (default)
+#   - NodePort: Exposes on each node's IP at static port (30080)
+#   - LoadBalancer: Cloud provider load balancer
+#
+# This Service:
+#   - Type: NodePort (accessible on node:30080)
+#   - Routes: External port 80 → Container port 5000
+#   - Selector: Routes to pods with label 'app: task-api'
+#   - Load Balancing: Distributes traffic across healthy pods
+#
+# Apply: kubectl apply -f service.yaml
+# Test:  curl http://<node-ip>:30080/health
+# =============================================================================
+
 apiVersion: v1
 kind: Service
 metadata:

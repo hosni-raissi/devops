@@ -1,3 +1,20 @@
+# =============================================================================
+# CONFIGMAP.YAML - Application Configuration
+# =============================================================================
+# Purpose: Stores non-sensitive configuration as key-value pairs
+#
+# Why ConfigMaps?
+#   - Decouples config from container images
+#   - Can be updated without rebuilding images
+#   - Mounted as environment variables or files in pods
+#
+# Current Config:
+#   - FLASK_ENV: Application environment (production/development)
+#   - LOG_LEVEL: Logging verbosity (INFO/DEBUG/WARNING)
+#
+# Apply: kubectl apply -f configmap.yaml
+# =============================================================================
+
 apiVersion: v1
 kind: ConfigMap
 metadata:

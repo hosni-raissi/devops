@@ -1,7 +1,25 @@
-"""
-Task Management REST API - A simple DevOps demo service
-Includes: Metrics, Structured Logging, and Tracing
-"""
+# =============================================================================
+# MAIN.PY - Task Management REST API
+# =============================================================================
+# Purpose: Flask-based REST API with full observability stack
+#
+# Endpoints:
+#   GET  /health      - Health check for Kubernetes probes
+#   GET  /metrics     - Prometheus metrics (request count, latency, memory)
+#   GET  /api/tasks   - List all tasks
+#   POST /api/tasks   - Create a new task
+#   GET  /api/tasks/id - Get specific task
+#   PUT  /api/tasks/id - Update task
+#   DELETE /api/tasks/id - Delete task
+#
+# Observability Features:
+#   - Prometheus Metrics: http_requests_total, http_request_duration_seconds
+#   - Structured Logging: JSON format with trace IDs
+#   - Distributed Tracing: X-Trace-ID header propagation
+#
+# Run: gunicorn --bind 0.0.0.0:5000 main:app
+# =============================================================================
+
 import time
 import uuid
 import logging

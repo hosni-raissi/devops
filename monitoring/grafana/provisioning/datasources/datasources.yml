@@ -1,8 +1,25 @@
+# =============================================================================
+# DATASOURCES.YML - Grafana Data Source Configuration
+# =============================================================================
+# Purpose: Auto-provisions Prometheus as a data source in Grafana
+#
+# Why Provisioning?
+#   - No manual setup needed on Grafana startup
+#   - Consistent configuration across environments
+#   - Version controlled with infrastructure code
+#
+# Data Source Details:
+#   - Type: Prometheus
+#   - URL: http://prometheus:9090 (Docker network)
+#   - Default: Yes (used for new panels)
+# =============================================================================
+
 apiVersion: 1
 
 datasources:
   - name: Prometheus
     type: prometheus
+    uid: prometheus
     access: proxy
     url: http://prometheus:9090
     isDefault: true
