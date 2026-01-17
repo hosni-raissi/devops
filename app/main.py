@@ -4,18 +4,24 @@
 # Purpose: Flask-based REST API with full observability stack
 #
 # Endpoints:
-#   GET  /health      - Health check for Kubernetes probes
-#   GET  /metrics     - Prometheus metrics (request count, latency, memory)
-#   GET  /api/tasks   - List all tasks
-#   POST /api/tasks   - Create a new task
-#   GET  /api/tasks/id - Get specific task
-#   PUT  /api/tasks/id - Update task
-#   DELETE /api/tasks/id - Delete task
+#   GET  /health         - Health check for Kubernetes probes
+#   GET  /metrics        - Prometheus metrics (request count, latency, memory)
+#   GET  /api/tasks      - List all tasks
+#   POST /api/tasks      - Create a new task (with input validation)
+#   GET  /api/tasks/:id  - Get specific task
+#   PUT  /api/tasks/:id  - Update task
+#   DELETE /api/tasks/:id - Delete task
+#   GET  /api/tasks/stats - Get task statistics (total, completed, pending)
 #
 # Observability Features:
 #   - Prometheus Metrics: http_requests_total, http_request_duration_seconds
 #   - Structured Logging: JSON format with trace IDs
 #   - Distributed Tracing: X-Trace-ID header propagation
+#
+# Input Validation:
+#   - Title required and max 200 characters
+#   - Description max 1000 characters
+#   - Proper error messages with HTTP status codes
 #
 # Run: gunicorn --bind 0.0.0.0:5000 main:app
 # =============================================================================
@@ -103,15 +109,30 @@ def get_task(task_id):
 def create_task():
     """Create a new task"""
     data = request.get_json()
-    if not data or 'title' not in data:
+    
+    # Input validation
+    if not data:
+        logger.error("Invalid request: no JSON body", extra={'trace_id': g.trace_id})
+        return jsonify({"error": "Request body must be JSON"}), 400
+    
+    if 'title' not in data:
         logger.error("Invalid request: missing title", extra={'trace_id': g.trace_id})
         return jsonify({"error": "Title is required"}), 400
+    
+    title = data['title'].strip()
+    if len(title) == 0:
+        logger.error("Invalid request: empty title", extra={'trace_id': g.trace_id})
+        return jsonify({"error": "Title cannot be empty"}), 400
+    
+    if len(title) > 200:
+        logger.error("Invalid request: title too long", extra={'trace_id': g.trace_id})
+        return jsonify({"error": "Title must be 200 characters or less"}), 400
     
     task_id = str(uuid.uuid4())[:8]
     task = {
         "id": task_id,
-        "title": data['title'],
-        "description": data.get('description', ''),
+        "title": title,
+        "description": data.get('description', '').strip()[:1000],  # Limit description
         "completed": False,
         "created_at": datetime.utcnow().isoformat()
     }
@@ -142,6 +163,30 @@ def delete_task(task_id):
     del tasks[task_id]
     logger.info(f"Task deleted: {task_id}", extra={'trace_id': g.trace_id})
     return jsonify({"message": "Task deleted successfully"})
+
+@app.route('/api/tasks/stats', methods=['GET'])
+def get_stats():
+    """Get task statistics"""
+    total = len(tasks)
+    completed = sum(1 for t in tasks.values() if t.get('completed', False))
+    pending = total - completed
+    return jsonify({
+        "total": total,
+        "completed": completed,
+        "pending": pending,
+        "completion_rate": round(completed / total * 100, 2) if total > 0 else 0
+    })
+
+@app.errorhandler(404)
+def not_found(error):
+    """Handle 404 errors"""
+    return jsonify({"error": "Resource not found"}), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    """Handle 500 errors"""
+    logger.error(f"Internal server error: {error}", extra={'trace_id': getattr(g, 'trace_id', 'unknown')})
+    return jsonify({"error": "Internal server error"}), 500
 
 if __name__ == '__main__':
     logger.info("Starting Task Management API", extra={'trace_id': 'startup'})
