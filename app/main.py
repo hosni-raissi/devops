@@ -1,24 +1,6 @@
-# =============================================================================
-# MAIN.PY - Task Management REST API
-# =============================================================================
-# Purpose: Flask-based REST API with full observability stack
-#
-# Endpoints:
-#   GET  /health      - Health check for Kubernetes probes
-#   GET  /metrics     - Prometheus metrics (request count, latency, memory)
-#   GET  /api/tasks   - List all tasks
-#   POST /api/tasks   - Create a new task
-#   GET  /api/tasks/id - Get specific task
-#   PUT  /api/tasks/id - Update task
-#   DELETE /api/tasks/id - Delete task
-#
-# Observability Features:
-#   - Prometheus Metrics: http_requests_total, http_request_duration_seconds
-#   - Structured Logging: JSON format with trace IDs
-#   - Distributed Tracing: X-Trace-ID header propagation
-#
+# Task Management REST API - Flask with Prometheus metrics & structured logging
+# Endpoints: /health, /metrics, /api/tasks (CRUD)
 # Run: gunicorn --bind 0.0.0.0:5000 main:app
-# =============================================================================
 
 import time
 import uuid
@@ -107,11 +89,15 @@ def create_task():
         logger.error("Invalid request: missing title", extra={'trace_id': g.trace_id})
         return jsonify({"error": "Title is required"}), 400
     
+    title = str(data['title']).strip()
+    if not title:
+        return jsonify({"error": "Title cannot be empty"}), 400
+    
     task_id = str(uuid.uuid4())[:8]
     task = {
         "id": task_id,
-        "title": data['title'],
-        "description": data.get('description', ''),
+        "title": title[:200],  # Limit title length
+        "description": str(data.get('description', '')).strip()[:500],
         "completed": False,
         "created_at": datetime.utcnow().isoformat()
     }
