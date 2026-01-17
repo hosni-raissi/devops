@@ -100,6 +100,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
+          load: true
           tags: |
             ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
             ${{ env.DOCKER_IMAGE }}:latest
@@ -110,6 +111,7 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
+          scan-type: 'image'
           format: 'table'
           exit-code: '0'
           ignore-unfixed: true

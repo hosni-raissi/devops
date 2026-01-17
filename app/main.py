@@ -1,5 +1,5 @@
 # Task Management REST API - Flask with Prometheus metrics & structured logging
-# Endpoints: /health, /metrics, /api/tasks (CRUD)
+# Endpoints: /health, /metrics, /api/tasks (CRUD) ok 
 # Run: gunicorn --bind 0.0.0.0:5000 main:app
 
 import time
@@ -31,7 +31,7 @@ handler = logging.StreamHandler()
 handler.setFormatter(JSONFormatter())
 logger.addHandler(handler)
 
-# ===== OBSERVABILITY: Prometheus Metrics =====
+# ===== OBSERVABILITY: Prometheus Metrics . =====
 REQUEST_COUNT = Counter('http_requests_total', 'Total HTTP requests', ['method', 'endpoint', 'status'])
 REQUEST_LATENCY = Histogram('http_request_duration_seconds', 'HTTP request latency', ['method', 'endpoint'])
 
